@@ -28,6 +28,9 @@ class MainWindow(QMainWindow):
         right.addWidget(filler_button)
 
         left.addWidget(buttons.raw_mics_checkbox(self))
+        left.addWidget(buttons.ec_mics_checkbox(self))
+        left.addWidget(buttons.raw_speakers_checkbox(self))
+        left.addWidget(buttons.ec_speakers_checkbox(self))
         
         self.setWindowTitle("Unnamed App")
         self.setStatusBar(QStatusBar(self))

@@ -1,7 +1,7 @@
 from PyQt6.QtCore import QSize, Qt
-from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QMainWindow, QStatusBar, QHBoxLayout, QVBoxLayout
+from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QMainWindow, QStatusBar, QHBoxLayout, QVBoxLayout, QFileDialog
 # Only needed for access to command line arguments
-import sys
+import sys, os
 import buttons
 
 # Subclass QMainWindow to customize your application's main window
@@ -27,10 +27,13 @@ class MainWindow(QMainWindow):
         filler_button = QPushButton("filler button")
         right.addWidget(filler_button)
 
-        left.addWidget(buttons.raw_mics_checkbox(self))
-        left.addWidget(buttons.ec_mics_checkbox(self))
-        left.addWidget(buttons.raw_speakers_checkbox(self))
-        left.addWidget(buttons.ec_speakers_checkbox(self))
+        self.file_select1 = buttons.file_select1(self)
+        left.addWidget(self.file_select1)
+        left.addWidget(buttons.browse_files_button(self, self.open_file_dialog))
+        left.addWidget(buttons.raw_mics_checkbox(self, self.show_state))
+        left.addWidget(buttons.ec_mics_checkbox(self, self.show_state))
+        left.addWidget(buttons.raw_speakers_checkbox(self, self.show_state))
+        left.addWidget(buttons.ec_speakers_checkbox(self, self.show_state))
         
         self.setWindowTitle("Unnamed App")
         self.setStatusBar(QStatusBar(self))
@@ -38,6 +41,21 @@ class MainWindow(QMainWindow):
         widget = QWidget()
         widget.setLayout(layout)
         self.setCentralWidget(widget)
+
+    def show_state(self, s):
+        print(s == Qt.CheckState.Checked.value)
+
+    def open_file_dialog(self):
+        print('browse button click')
+        file_filter = ""
+        response = QFileDialog.getOpenFileName(
+            parent=self,
+            caption='Select a file',
+            directory=os.getcwd(),
+            filter=file_filter,
+            initialFilter=''
+        )
+        self.file_select1.setText(str(response[0]))
 
 # You need one (and only one) QApplication instance per application.
 # Pass in sys.argv to allow command line arguments for your app.

@@ -28,12 +28,15 @@ class MainWindow(QMainWindow):
         right.addWidget(filler_button)
 
         self.file_select1 = buttons.file_select1(self)
+        self.folder_select1 = buttons.folder_select1(self)
         left.addWidget(self.file_select1)
-        left.addWidget(buttons.browse_files_button(self, self.open_file_dialog))
+        left.addWidget(buttons.browse_files_button(self, self.browse_for_file))
         left.addWidget(buttons.raw_mics_checkbox(self, self.show_state))
         left.addWidget(buttons.ec_mics_checkbox(self, self.show_state))
         left.addWidget(buttons.raw_speakers_checkbox(self, self.show_state))
         left.addWidget(buttons.ec_speakers_checkbox(self, self.show_state))
+        left.addWidget(self.folder_select1)
+        left.addWidget(buttons.browse_folders_button(self, self.browse_for_folder))
         
         self.setWindowTitle("Unnamed App")
         self.setStatusBar(QStatusBar(self))
@@ -45,17 +48,25 @@ class MainWindow(QMainWindow):
     def show_state(self, s):
         print(s == Qt.CheckState.Checked.value)
 
-    def open_file_dialog(self):
+    def browse_for_file(self):
         print('browse button click')
-        file_filter = ""
+        file_filter = "Binary files (*.bin; *.dat);;All Files (*.*)"
         response = QFileDialog.getOpenFileName(
             parent=self,
             caption='Select a file',
             directory=os.getcwd(),
             filter=file_filter,
-            initialFilter=''
+            initialFilter=file_filter.split(';;')[0]
         )
         self.file_select1.setText(str(response[0]))
+
+    def browse_for_folder(self):
+        print('brwose folder btn')
+        response = QFileDialog.getExistingDirectory(
+            parent=self,
+            caption='Select a folder'
+        )
+        print(response)
 
 # You need one (and only one) QApplication instance per application.
 # Pass in sys.argv to allow command line arguments for your app.

@@ -15,7 +15,7 @@ def about_button_pressed(s):
     print("About button pressed")
 
 
-## APP BUTTONS
+## APP BUTTONS ETC.
 
 def file_select1(app):
     file_txt1 = QTextEdit()
@@ -25,6 +25,15 @@ def browse_files_button(app, action):
     browse_files = QPushButton("Browse...")
     browse_files.clicked.connect(action)
     return browse_files
+
+def folder_select1(app):
+    folder_txt1 = QTextEdit()
+    return folder_txt1
+
+def browse_folders_button(app, action):
+    browse_folders = QPushButton("Browse...")
+    browse_folders.clicked.connect(action)
+    return browse_folders
 
 def raw_mics_checkbox(app, action):
     raw_mics = QCheckBox("raw mics")

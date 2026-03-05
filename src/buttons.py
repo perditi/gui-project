@@ -1,5 +1,5 @@
 from PyQt6.QtGui import QAction, QIcon
-from PyQt6.QtWidgets import QCheckBox, QPushButton, QTextEdit
+from PyQt6.QtWidgets import QCheckBox, QPushButton, QTextEdit, QLineEdit
 from PyQt6.QtCore import Qt
 import os
 
@@ -18,7 +18,7 @@ def about_button_pressed(s):
 ## APP BUTTONS ETC.
 
 def file_select1(app):
-    file_txt1 = QTextEdit()
+    file_txt1 = QLineEdit()
     return file_txt1
 
 def browse_files_button(app, action):
@@ -27,7 +27,7 @@ def browse_files_button(app, action):
     return browse_files
 
 def folder_select1(app):
-    folder_txt1 = QTextEdit()
+    folder_txt1 = QLineEdit()
     return folder_txt1
 
 def browse_folders_button(app, action):

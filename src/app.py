@@ -8,7 +8,8 @@ import buttons
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.graph_window = None
+        self.graph_windows = {}
+        self.graph_windows_num = 0
 
         status_bar = QStatusBar(self)
 
@@ -75,31 +76,37 @@ class MainWindow(QMainWindow):
             parent=self,
             caption='Select a folder'
         )
-        print(response)
+        self.folder_select1.setText(str(response))
 
     def open_graph_window(self):
-        print('open graph window press')
-        if self.graph_window == None:
-            self.graph_window = GraphWindow()
-        self.graph_window.show()
-
-# ok what if i make self.graph_window a list and when i open a new one i append to the list...
-# pass in to GraphWindow something that lets it know where it is in the index,
-# then on close i make it remove itself from the list
-# then i can have unlimited extra windows...
-
+        print(f'adding {self.graph_windows_num}')
+        new_key = self.graph_windows_num
+        new_window = GraphWindow(self, new_key)
+        self.graph_windows[new_key] = new_window
+        self.graph_windows_num += 1
+        new_window.show()
+        print(f"now we have {len(self.graph_windows)} windows")
 
 class GraphWindow(QWidget):
     """
     This "window" is a QWidget. If it has no parent, it
     will appear as a free-floating window as we want.
     """
-    def __init__(self):
+    def __init__(self, app, key, title=''):
         super().__init__()
+        self.setWindowTitle(title)
+        self.app = app
+        self.key = key
+
         layout = QVBoxLayout()
-        self.label = QLabel("Another Window")
+        self.label = QLabel(f"Another Window {key}")
         layout.addWidget(self.label)
         self.setLayout(layout)
+
+    def closeEvent(self, event):
+        print(f"removing {self.key}")
+        del self.app.graph_windows[self.key]
+        print(f"now we have {len(self.app.graph_windows)} windows")
 
 # You need one (and only one) QApplication instance per application.
 # Pass in sys.argv to allow command line arguments for your app.

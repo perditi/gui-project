@@ -1,6 +1,7 @@
 from PyQt6.QtCore import QSize, Qt
 from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QMainWindow, QStatusBar, QHBoxLayout, QVBoxLayout, QFileDialog, QLayout, QLabel
 # Only needed for access to command line arguments
+import pyqtgraph as pg
 import sys, os
 import buttons
 
@@ -89,8 +90,14 @@ class MainWindow(QMainWindow):
 
     def closeEvent(self, event):
         print("closing app")
+        num_closed = 0
         for key in list(self.graph_windows.keys()):
             self.graph_windows[key].close()
+            num_closed += 1
+        if num_closed == 0:
+            print("no graph windows to close")
+        else:
+            print(f"closed {num_closed} grpah windows")
 
 class GraphWindow(QWidget):
     """
@@ -107,6 +114,14 @@ class GraphWindow(QWidget):
         self.label = QLabel(f"Another Window {key}")
         layout.addWidget(self.label)
         self.setLayout(layout)
+
+        self.graph = pg.PlotWidget()
+        self.graph.setBackground('w')
+        pen = pg.mkPen(color=(0,0,0))
+        layout.addWidget(self.graph)
+        x = [a for a in range(100)]
+        y = [-1*((b*b) - (100*b)) for b in x]
+        self.graph.plot(x,y, pen=pen)
 
     def closeEvent(self, event):
         print(f"removing {self.key}")

@@ -3,6 +3,7 @@ from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QMainWindow, QSt
 # Only needed for access to command line arguments
 import pyqtgraph as pg
 import sys, os
+from datetime import datetime
 import buttons
 
 # Subclass QMainWindow to customize your application's main window
@@ -10,7 +11,6 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.graph_windows = {}
-        self.graph_windows_num = 0
 
         status_bar = QStatusBar(self)
 
@@ -80,11 +80,10 @@ class MainWindow(QMainWindow):
         self.folder_select1.setText(str(response))
 
     def open_graph_window(self):
-        print(f'adding {self.graph_windows_num}')
-        new_key = self.graph_windows_num
+        new_key = datetime.now()
+        print(f'adding {new_key}')
         new_window = GraphWindow(self, new_key)
         self.graph_windows[new_key] = new_window
-        self.graph_windows_num += 1
         new_window.show()
         print(f"now we have {len(self.graph_windows)} windows")
 

@@ -1,5 +1,5 @@
 from PyQt6.QtCore import QSize, Qt
-from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QMainWindow, QStatusBar, QHBoxLayout, QVBoxLayout, QFileDialog, QLayout, QLabel
+from PyQt6.QtWidgets import QApplication, QWidget, QPushButton, QMainWindow, QStatusBar, QHBoxLayout, QVBoxLayout, QFileDialog, QLayout, QLabel, QTabWidget
 # Only needed for access to command line arguments
 import pyqtgraph as pg
 import sys, os
@@ -12,49 +12,75 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.graph_windows = {}
 
+        parse_window_layout = QHBoxLayout()
+        parse_settings = QVBoxLayout()
+        plot_window_layout = QVBoxLayout()
+        plot_settings = QVBoxLayout()
+        tabs = QTabWidget()
+        tabs.setTabPosition(QTabWidget.TabPosition.North)
+
+
         status_bar = QStatusBar(self)
 
+        # MENU
         menu = self.menuBar()
         file_menu = menu.addMenu("&File") #The ampersand defines a quick key to jump to this menu when pressing Alt
         edit_menu = menu.addMenu("&Edit")
         about_menu = menu.addMenu("?")
+
+        file_menu.addAction(buttons.preferences_button(self))
         about_menu.addAction(buttons.about_button(self))
 
-        layout = QHBoxLayout()
+        #layout = QHBoxLayout()
 
-        left = QVBoxLayout()
-        #left.setHorizontalSizeConstraint()
-        layout.addLayout(left)
-        
-        right = QVBoxLayout()
-        layout.addLayout(right)
+        # PARSE WINDOW
+        self.file_select1 = buttons.file_select1(self) # text box
+        self.folder_select1 = buttons.folder_select1(self) # text box
+        self.raw_mic_chk = buttons.raw_mics_checkbox(self, self.show_state)
+        self.ec_mic_chk = buttons.ec_mics_checkbox(self, self.show_state)
+        self.raw_spkr_chk = buttons.raw_speakers_checkbox(self, self.show_state)
+        self.ec_spkr_chk = buttons.ec_speakers_checkbox(self, self.show_state)
 
-        # Set the central widget of the Window.
-        filler_button = QPushButton("filler button")
-        filler_button.clicked.connect(self.open_graph_window)
-        right.addWidget(filler_button)
-
-        self.file_select1 = buttons.file_select1(self)
-        self.folder_select1 = buttons.folder_select1(self)
         file_select_layout = QHBoxLayout()
         file_select_layout.addWidget(self.file_select1)
         file_select_layout.addWidget(buttons.browse_files_button(self, self.browse_for_file))
-        left.addLayout(file_select_layout)
-        left.addWidget(buttons.raw_mics_checkbox(self, self.show_state))
-        left.addWidget(buttons.ec_mics_checkbox(self, self.show_state))
-        left.addWidget(buttons.raw_speakers_checkbox(self, self.show_state))
-        left.addWidget(buttons.ec_speakers_checkbox(self, self.show_state))
+        parse_settings.addLayout(file_select_layout)
+        parse_settings.addWidget(self.raw_mic_chk)
+        parse_settings.addWidget(self.ec_mic_chk)
+        parse_settings.addWidget(self.raw_spkr_chk)
+        parse_settings.addWidget(self.ec_spkr_chk)
         folder_select_layout = QHBoxLayout()
         folder_select_layout.addWidget(self.folder_select1)
         folder_select_layout.addWidget(buttons.browse_folders_button(self, self.browse_for_folder))
-        left.addLayout(folder_select_layout)
+        parse_settings.addLayout(folder_select_layout)
+
+        parse_window_layout.addLayout(parse_settings)
+        parse_window_layout.addWidget(buttons.parse_button(self, self.parse))
         
+        # PLOT WINDOW
+        
+
+        plot_window_layout.addLayout(plot_settings)
+        plot_window_layout.addWidget(buttons.plot_button(self, self.open_graph_window))
+
+        
+
+
         self.setWindowTitle("Unnamed App")
         self.setStatusBar(status_bar)
         self.setMinimumSize(QSize(500,300)) # width, height
-        widget = QWidget()
-        widget.setLayout(layout)
-        self.setCentralWidget(widget)
+        parse_window = QWidget()
+        parse_window.setLayout(parse_window_layout)
+        plot_window = QWidget()
+        plot_window.setLayout(plot_window_layout)
+        tabs.addTab(parse_window, "Parse")
+        tabs.addTab(plot_window, "Plot")
+        self.setCentralWidget(tabs)
+
+    def parse(self):
+        print("parse byutton pressed")
+        print(f"source: {self.file_select1.text()}")
+        print()
 
     def show_state(self, s):
         print(s == Qt.CheckState.Checked.value)

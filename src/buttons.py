@@ -5,9 +5,16 @@ import os
 
 ## MENU BUTTONS
 
+def preferences_button(app):
+    pref_button = QAction("Preferences", app)
+    pref_button.triggered.connect(pref_button_pressed)
+    return pref_button
+
+def pref_button_pressed(s):
+    print("Prefernces button pressed")
+
 def about_button(app):
     about_button = QAction("About...", app)
-    
     about_button.triggered.connect(about_button_pressed)
     return about_button
 
@@ -63,4 +70,14 @@ def ec_speakers_checkbox(app, action):
     ec_speakers.stateChanged.connect(action)
     return ec_speakers
 
-    # ^^ all of these default to unchecked, later can add a preferences file that saves config so it defaults to what you had it last
+# ^^ all of these default to unchecked, later can add a preferences file that saves config so it defaults to what you had it last
+
+def parse_button(app, action):
+    parse_button = QPushButton("Parse")
+    parse_button.clicked.connect(action)
+    return parse_button
+
+def plot_button(app, action):
+    plot_button = QPushButton("Plot")
+    plot_button.clicked.connect(action)
+    return plot_button

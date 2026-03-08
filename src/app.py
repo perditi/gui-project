@@ -87,6 +87,11 @@ class MainWindow(QMainWindow):
         new_window.show()
         print(f"now we have {len(self.graph_windows)} windows")
 
+    def closeEvent(self, event):
+        print("closing app")
+        for key in list(self.graph_windows.keys()):
+            self.graph_windows[key].close()
+
 class GraphWindow(QWidget):
     """
     This "window" is a QWidget. If it has no parent, it

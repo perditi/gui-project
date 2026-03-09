@@ -5,6 +5,8 @@ import pyqtgraph as pg
 import sys, os
 from datetime import datetime
 import buttons
+from scipy.io.wavfile import read
+import numpy as np
 
 # Subclass QMainWindow to customize your application's main window
 class MainWindow(QMainWindow):
@@ -106,12 +108,41 @@ class MainWindow(QMainWindow):
         self.folder_select1.setText(str(response))
 
     def open_graph_window(self):
+
+        x, y = self.read_wav("C:/Users/timot/Documents/Ninajirachi - iPod Touch.wav")
+        print(f"x = {x} with length {len(x)}")
+        print(f"y = {y} with length {len(y)}")
+
+        y = [i[0] for i in y]
+
         new_key = datetime.now()
         print(f'adding {new_key}')
-        new_window = GraphWindow(self, new_key)
+        new_window = GraphWindow(self, new_key, x=x, y=y)
         self.graph_windows[new_key] = new_window
         new_window.show()
         print(f"now we have {len(self.graph_windows)} windows")
+
+    def read_wav(self, file): # i got this from gemini :/ it's on them for putting gemini in google search
+        try:
+            sampleRate, audioBuffer = read(file)
+        except FileNotFoundError:
+            print(f"Error: The file '{file}' was not found. Please check the file path.")
+            exit()
+        except ValueError as e:
+            print(f"Error reading WAV file: {e}")
+            # Handles cases like stereo files by averaging channels, if desired, but for simplicity we assume mono or handle as below
+            if len(audioBuffer.shape) == 2:
+                print("Stereo file detected. Converting to mono by averaging channels.")
+                audioBuffer = audioBuffer.mean(axis=1)
+            # If still problematic, exit
+            else:
+                exit()
+            
+        duration = len(audioBuffer) / sampleRate
+        time = np.linspace(0, duration, num=len(audioBuffer))
+        return time, audioBuffer
+
+        
 
     def closeEvent(self, event):
         print("closing app")
@@ -129,7 +160,7 @@ class GraphWindow(QWidget):
     This "window" is a QWidget. If it has no parent, it
     will appear as a free-floating window as we want.
     """
-    def __init__(self, app, key, title=''):
+    def __init__(self, app, key, x, y, title=''):
         super().__init__()
         self.setWindowTitle(title)
         self.app = app
@@ -144,8 +175,6 @@ class GraphWindow(QWidget):
         self.graph.setBackground('w')
         pen = pg.mkPen(color=(0,0,0))
         layout.addWidget(self.graph)
-        x = [a for a in range(100)]
-        y = [-1*((b*b) - (100*b)) for b in x]
         self.graph.plot(x,y, pen=pen)
 
     def closeEvent(self, event):

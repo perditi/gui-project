@@ -38,6 +38,7 @@ class MainWindow(QMainWindow):
         # PARSE WINDOW
         self.file_select1 = buttons.file_select1(self) # text box
         self.folder_select1 = buttons.folder_select1(self) # text box
+        self.file_select_wav = buttons.file_select_wav(self) # text box
         self.raw_mic_chk = buttons.raw_mics_checkbox(self, self.show_state)
         self.ec_mic_chk = buttons.ec_mics_checkbox(self, self.show_state)
         self.raw_spkr_chk = buttons.raw_speakers_checkbox(self, self.show_state)
@@ -63,10 +64,13 @@ class MainWindow(QMainWindow):
         
 
         plot_window_layout.addLayout(plot_settings)
+        file_select_wav_layout = QHBoxLayout()
+        file_select_wav_layout.addWidget(self.file_select_wav)
+        file_select_wav_layout.addWidget(buttons.browse_files_button(self, self.browse_for_file_wav))
+        plot_settings.addLayout(file_select_wav_layout)
         plot_window_layout.addWidget(buttons.plot_button(self, self.open_graph_window))
 
-        
-
+        # GENERAL WINDOW
 
         self.setWindowTitle("Unnamed App")
         self.setStatusBar(status_bar)
@@ -98,6 +102,20 @@ class MainWindow(QMainWindow):
             initialFilter=file_filter.split(';;')[0]
         )
         self.file_select1.setText(str(response[0]))
+        print(f"this is swhat we just seleect3ed biiitch: {self.file_select1.text()}")
+
+    def browse_for_file_wav(self):
+        print('browse button click')
+        file_filter = "WAV files (*.wav);;All Files (*.*)"
+        response = QFileDialog.getOpenFileName(
+            parent=self,
+            caption='Select a file',
+            directory=os.getcwd(),
+            filter=file_filter,
+            initialFilter=file_filter.split(';;')[0]
+        )
+        self.file_select_wav.setText(str(response[0]))
+        print(f"this is swhat we just seleect3ed biiitch: {self.file_select_wav.text()}")
 
     def browse_for_folder(self):
         print('brwose folder btn')
@@ -109,7 +127,7 @@ class MainWindow(QMainWindow):
 
     def open_graph_window(self):
 
-        x, y = self.read_wav("C:/Users/timot/Documents/Ninajirachi - iPod Touch.wav")
+        x, y = self.read_wav(self.file_select_wav.text())
         print(f"x = {x} with length {len(x)}")
         print(f"y = {y} with length {len(y)}")
 

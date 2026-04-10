@@ -42,6 +42,15 @@ def browse_folders_button(app, action):
     browse_folders.clicked.connect(action)
     return browse_folders
 
+def file_select_wav(app):
+    file_txt_wav = QLineEdit()
+    return file_txt_wav
+
+# def browse_files_button_wav(app, action):
+#     browse_files_wav = QPushButton("Browse...")
+#     browse_files_wav.clicked.connect(action)
+#     return browse_files_wav
+
 def raw_mics_checkbox(app, action):
     raw_mics = QCheckBox("raw mics")
     raw_mics.setCheckState(Qt.CheckState.Unchecked)
